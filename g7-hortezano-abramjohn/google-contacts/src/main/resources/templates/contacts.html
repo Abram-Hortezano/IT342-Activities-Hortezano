@@ -1,10 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Google Contacts</title>
 </head>
 <body>
-$END$
+<h1>Your Contacts</h1>
+
+<!-- Error Message -->
+<div th:if="${error}">
+  <p style="color:red" th:text="${error}"></p>
+</div>
+
+<!-- Contacts Table -->
+<table border="1">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Resource Name</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="contact : ${contacts}">
+    <td th:text="${contact.names[0].displayName}">Name</td>
+    <td th:text="${contact.emailAddresses[0].value}">Email</td>
+    <td th:text="${contact.resourceName}">Resource Name</td>
+    <td>
+      <!-- Update Form -->
+      <form th:action="@{/contacts/update}" method="post" style="display:inline;">
+        <input type="hidden" name="resourceName" th:value="${contact.resourceName}" />
+        <input type="text" name="firstName" placeholder="First Name" th:value="${contact.names[0].givenName}" />
+        <input type="text" name="lastName" placeholder="Last Name" th:value="${contact.names[0].familyName}" />
+        <input type="text" name="email" placeholder="Email" th:value="${contact.emailAddresses[0].value}" />
+        <button type="submit">Update</button>
+      </form>
+
+      <!-- Delete Form -->
+      <form th:action="@{/contacts/delete}" method="post" style="display:inline;">
+        <input type="hidden" name="resourceName" th:value="${contact.resourceName}" />
+        <button type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Add New Contact Form -->
+<h2>Add New Contact</h2>
+<form th:action="@{/contacts}" method="post">
+  <input type="text" name="firstName" placeholder="First Name" required />
+  <input type="text" name="lastName" placeholder="Last Name" required />
+  <input type="email" name="email" placeholder="Email" required />
+  <button type="submit">Add Contact</button>
+</form>
 </body>
 </html>
